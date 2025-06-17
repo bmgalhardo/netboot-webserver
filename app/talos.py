@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import yaml
 import requests
 
@@ -10,7 +12,8 @@ class Schematic:
 
     @staticmethod
     def _read_config() -> dict:
-        with open("config.yml", "r") as f:
+        config_path = Path(__file__).parent / "config.yml"
+        with open(config_path, "r") as f:
             return yaml.safe_load(f)
 
     @property

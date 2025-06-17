@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import uvicorn
 import textwrap
 
@@ -8,7 +10,8 @@ from app.talos import Schematic
 from app.utils import MACAddress
 
 app = FastAPI()
-app.mount("/static", StaticFiles(directory="static"), name="static")
+static_path = Path(__file__).parent / "static"
+app.mount("/static", StaticFiles(directory=static_path), name="static")
 
 schematic = Schematic()
 
