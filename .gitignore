@@ -1,0 +1,5 @@
+app/static
+
+# JetBrains IDE
+.idea/
+__pycache__/

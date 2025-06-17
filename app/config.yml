@@ -1,0 +1,19 @@
+extraKernelArgs: &extraKernelArgs
+  - talos.config=http://netboot.bgalhardo.local/static/talos/ca-patch.yml
+talosVersion: 1.10.1
+# proxmox-control
+02-00-00-00-01:
+  customization:
+    extraKernelArgs: *extraKernelArgs
+    systemExtensions:
+      officialExtensions:
+        - siderolabs/qemu-guest-agent
+# proxmox-storage
+02-00-00-00-02:
+  customization:
+    extraKernelArgs: *extraKernelArgs
+    systemExtensions:
+      officialExtensions:
+        - siderolabs/qemu-guest-agent
+        - siderolabs/util-linux-tools
+        - siderolabs/iscsi-tools
