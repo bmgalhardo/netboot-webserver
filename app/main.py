@@ -18,19 +18,15 @@ def dynamic_ipxe(mac_addr: str) -> Response:
         mac = MACAddress(mac_addr)
 
         if mac.normalized[:6] == "020000":
-            base_schematic = "376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba"
-            talos_version = "1.10.1"
-            ipxe_chain = f"https://pxe.factory.talos.dev/pxe/{base_schematic}/{talos_version}/metal-amd64"
-
             script = f"""
                 #!ipxe
                 echo Booting {mac.as_colon()}
-                chain {ipxe_chain}
+                chain http://netboot.bgalhardo.local/static/talos/talos.ipxe
                 """
         else:
             script = f"""
                 #!ipxe
-                echo No boot assers
+                echo No boot assets
                 sleep 5
             """
     except ValueError:
