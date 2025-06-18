@@ -6,39 +6,37 @@ import textwrap
 from fastapi import FastAPI, Response
 from fastapi.staticfiles import StaticFiles
 
-from app.talos import Schematic
 from app.utils import MACAddress
 
 app = FastAPI()
 static_path = Path(__file__).parent / "static"
 app.mount("/static", StaticFiles(directory=static_path), name="static")
 
-schematic = Schematic()
-
-@app.get('/healthcheck')
-def healthcheck() -> str:
-    return "OK"
-
 @app.get('/boot/{mac_addr}')
 def dynamic_ipxe(mac_addr: str) -> Response:
     try:
         mac = MACAddress(mac_addr)
-        ipxe_url = schematic.mac_to_factory_url(mac)
-        script = f"""
-            #!ipxe
-            echo Booting {mac.as_colon()}
-            chain {ipxe_url}
+
+        if mac.normalized[:6] == "020000":
+            base_schematic = "376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba"
+            talos_version = "1.10.1"
+            ipxe_chain = f"https://pxe.factory.talos.dev/pxe/{base_schematic}/{talos_version}/metal-amd64"
+
+            script = f"""
+                #!ipxe
+                echo Booting {mac.as_colon()}
+                chain {ipxe_chain}
+                """
+        else:
+            script = f"""
+                #!ipxe
+                echo No boot assers
+                sleep 5
             """
     except ValueError:
         script = f"""
             #!ipxe
             echo Mac Address {mac_addr} not valid
-            sleep 5
-        """
-    except KeyError:
-        script = f"""
-            #!ipxe
-            echo No boot assets found
             sleep 5
         """
     return Response(content=textwrap.dedent(script).lstrip('\n'), media_type="text/plain")
