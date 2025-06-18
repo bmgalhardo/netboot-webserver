@@ -17,11 +17,11 @@ def dynamic_ipxe(mac_addr: str) -> Response:
     try:
         mac = MACAddress(mac_addr)
 
-        if mac.normalized[:6] == "020000":
+        if mac.as_dash().startswith("02-00-00-00-01"):
             script = f"""
                 #!ipxe
                 echo Booting {mac.as_colon()}
-                chain http://netboot.bgalhardo.local/static/talos/talos.ipxe
+                chain http://netboot.bgalhardo.local/static/talos/proxmox/talos.ipxe
                 """
         else:
             script = f"""
