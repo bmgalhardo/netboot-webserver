@@ -14,27 +14,20 @@ app.mount("/static", StaticFiles(directory=static_path), name="static")
 
 @app.get('/boot/{mac_addr}')
 def dynamic_ipxe(mac_addr: str) -> Response:
-    try:
-        mac = MACAddress(mac_addr)
+    mac = MACAddress(mac_addr)
 
-        if mac.as_dash().startswith("02-00-00-00-01"):
-            script = f"""
-                #!ipxe
-                echo Booting {mac.as_colon()}
-                chain http://netboot.bgalhardo.local/static/talos/proxmox/talos.ipxe
-                """
-        else:
-            script = f"""
-                #!ipxe
-                echo No boot assets
-                sleep 5
-            """
-    except ValueError:
+    if mac.as_dash().startswith("02-00-00-00-01"):
         script = f"""
             #!ipxe
-            echo Mac Address {mac_addr} not valid
-            sleep 5
+            echo Booting {mac.as_colon()} with Talos
+            chain http://netboot.bgalhardo.local/static/talos/proxmox/talos.ipxe
+            """
+    else:
+        script = f"""
+            #!ipxe
+            chain http://netboot.bgalhardo.local/static/alpine/alpine.ipxe
         """
+
     return Response(content=textwrap.dedent(script).lstrip('\n'), media_type="text/plain")
 
 if __name__ == '__main__':
