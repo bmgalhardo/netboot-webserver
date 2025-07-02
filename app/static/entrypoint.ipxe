@@ -1,3 +1,0 @@
-#!ipxe
-
-chain http://netboot.bgalhardo.local/boot/${mac}

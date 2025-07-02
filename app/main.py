@@ -13,6 +13,14 @@ app = FastAPI()
 static_path = Path(__file__).parent / "static"
 app.mount("/static", StaticFiles(directory=static_path), name="static")
 
+@app.get('/entrypoint')
+def entrypoint() -> Response:
+    script = f"""
+        #!ipxe
+        chain {settings.netboot_url}/boot/${{mac}}
+        """
+    return Response(content=textwrap.dedent(script).lstrip('\n'), media_type="text/plain")
+
 @app.get('/boot/{mac_addr}')
 def dynamic_ipxe(mac_addr: str) -> Response:
     mac = MACAddress(mac_addr)
