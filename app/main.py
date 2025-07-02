@@ -7,6 +7,7 @@ from fastapi import FastAPI, Response
 from fastapi.staticfiles import StaticFiles
 
 from app.utils import MACAddress
+from app.settings import settings
 
 app = FastAPI()
 static_path = Path(__file__).parent / "static"
@@ -20,12 +21,12 @@ def dynamic_ipxe(mac_addr: str) -> Response:
         script = f"""
             #!ipxe
             echo Booting {mac.as_colon()} with Talos
-            chain http://netboot.bgalhardo.local/static/talos/proxmox/talos.ipxe
+            chain {settings.netboot_url}/static/talos/proxmox/talos.ipxe
             """
     else:
         script = f"""
             #!ipxe
-            chain http://netboot.bgalhardo.local/static/alpine/alpine.ipxe
+            chain {settings.netboot_url}/static/alpine/alpine.ipxe
         """
 
     return Response(content=textwrap.dedent(script).lstrip('\n'), media_type="text/plain")
