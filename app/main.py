@@ -29,7 +29,7 @@ def dynamic_ipxe(mac_addr: str) -> Response:
         script = f"""
             #!ipxe
             echo Booting {mac.as_colon()} with Talos
-            chain {settings.netboot_url}/boot/talos
+            chain {settings.netboot_url}/talos
             """
     else:
         script = f"""
@@ -41,7 +41,6 @@ def dynamic_ipxe(mac_addr: str) -> Response:
 
 @app.get('/talos')
 def dynamic_talos_ipxe() -> Response:
-    # siderolink.api=https://omni.bgalhardo.local:8090?jointoken=eaiaoYVEiz0bPCAoqiNJrnSretcDCDEMYuelfAtHzRnC&grpc_tunnel=true talos.events.sink=[fdae:41e4:649b:9303::1]:8091 talos.logging.kernel=tcp://[fdae:41e4:649b:9303::1]:8092
     script = f"""
         #!ipxe
         
