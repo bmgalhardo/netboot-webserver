@@ -1,0 +1,9 @@
+services:
+  web-server:
+    build: .
+    environment:
+      - database_path:/data/db.sqlite3
+    ports:
+      - "8080:80"
+    volumes:
+      - ./db.sqlite3:/data/db.sqlite3

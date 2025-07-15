@@ -1,0 +1,2 @@
+class InvalidMAC(Exception):
+    pass
