@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 
 from pydantic import model_validator
@@ -5,6 +6,8 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
+    logging: str = "INFO"
+
     netboot_url: str = "http://localhost:8002"
 
     archs: str = "x86_64"
@@ -27,8 +30,11 @@ class Settings(BaseSettings):
     def static_dir(self) -> Path:
         if self.static_folder:
             return Path(self.static_folder)
-        else:
-            return self.base_dir / "static"
+
+        static = self.base_dir / "static"
+        if not static.exists():
+            static.mkdir()
+        return static
 
     @property
     def template_dir(self) -> Path:
@@ -38,5 +44,18 @@ class Settings(BaseSettings):
     def alpine_arch_list(self) -> list[str]:
         return self.archs.split(",")
 
+    @model_validator(mode="after")
+    def validate_logging(self):
+        if self.logging.upper() not in logging.getLevelNamesMapping():
+            raise ValueError(f"logging level <{self.logging}> not allowed. "
+                             f"Choose from {logging.getLevelNamesMapping()}")
+        return self
 
 settings = Settings()
+
+
+def setup_logger(level: str | None = None) -> None:
+    if level in logging.getLevelNamesMapping():
+        logging.basicConfig(level=level, force=True)
+    else:
+        logging.basicConfig(level=settings.logging, force=True)

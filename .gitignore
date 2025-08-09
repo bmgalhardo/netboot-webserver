@@ -1,3 +1,9 @@
 # JetBrains IDE
 .idea/
 __pycache__/
+
+# test dbs
+*.db
+
+# MacOS files
+.DS_Store
