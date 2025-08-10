@@ -27,4 +27,4 @@ COPY src/app /code/app
 
 WORKDIR /code
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "app.main:fastapi", "--host", "0.0.0.0", "--port", "80"]
